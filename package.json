@@ -1,0 +1,26 @@
+{
+	"name": "node-red-contrib-grpc",
+	"version": "0.0.1",
+	"description": "gRpc Wrapper for NodeRed",
+	"main": "grpc.js",
+	"node-red": {
+		"nodes": {
+			"grpc": "grpc.js"
+		}
+	},
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/julien-pal/node-red-contrib-grpc.git"
+	},
+	"keywords": [
+		"node-red",
+		"gRpc"
+	],
+	"dependencies": {
+		"@grpc/proto-loader": "^0.3.0",
+		"grpc": "^1.16.0",
+		"temp": "^0.8.3"
+	},
+	"author": "Julien Pal",
+	"license": "ISC"
+}
