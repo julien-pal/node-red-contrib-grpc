@@ -30,7 +30,7 @@ module.exports = function(RED) {
 
 	function generateFunction(service, method, methodes) {
 		console.log("functions", methodes);
-		var methodeName = getMethodeName(service, method);
+		var methodeName = utils.getMethodeName(service, method);
 		var body = 'console.log("Calling '+ service + '_' + method + '");';
 		body +=  'console.log("this", this);';
 		body += 'if (this["'+ methodeName +'"]){ this["'+ methodeName +'"](arguments) }';
@@ -110,7 +110,7 @@ module.exports = function(RED) {
 			try {
 				console.log("getGRPCServer", protoFunctions);				
 				node.status({fill:"green",shape:"dot",text:"connected"});
-				var methodeName = getMethodeName(config.service, config.method);
+				var methodeName = utils.getMethodeName(config.service, config.method);
 				protoFunctions[methodeName] = function(call, callback) {
 					console.log("toto")
 					node.send({
