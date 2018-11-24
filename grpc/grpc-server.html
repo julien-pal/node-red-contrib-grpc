@@ -4,12 +4,16 @@
         <label for="node-config-input-name"><i class="fa fa-tag"></i> Name</label>
         <input type="text" id="node-config-input-name" placeholder="Name">
     </div>
-    <div class="form-row node-input-server">
-        <label for="node-config-input-port" style="margin-left: 10px; width: 35px; ">Port</label>
+    <div class="form-row">
+        <label for="node-config-input-server"><i class="fa fa-tag"></i> Server</label>
+        <input type="text" id="node-config-input-server" placeholder="Server URL (default 0.0.0.0)">
+    </div>
+    <div class="form-row">
+        <label for="node-config-input-port" style="margin-left: 10px; width: 35px; "> Port</label>
         <input type="text" id="node-config-input-port" placeholder="Port" style="width:45px">		
     </div>
 	<div class="form-row">
-        <label for="node-config-input-protoFile">Proto File</label>
+        <label for="node-config-input-protoFile"> Proto File</label>
         <textarea id="node-config-input-protoFile" placeholder="Proto File" rows="30" style="width: 100%">
     </div> 
 </script>
@@ -22,7 +26,10 @@
 				value:5001,
 				required:true,
 				validate:RED.validators.number()
-			},       
+            },  
+            server: {
+                value:''
+            },
 			protoFile: {
 				value : ''
             },
@@ -32,6 +39,7 @@
         },
         icon: "grpc.svg",
         color: "#2DA6B0",
+
         label: function() {
             return (this.name ? this.name : localhost+":"+this.port);
         }

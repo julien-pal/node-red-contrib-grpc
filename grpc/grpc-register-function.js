@@ -2,8 +2,6 @@ module.exports = function(RED) {
 	"use strict";
     var utils = require('../utils/utils');
 
-	/****************************** gRpc register function *******************************/
-		
     function gRpcRegisterFuctionNode(config) {
         var node = this;
 		RED.nodes.createNode(node, config);
@@ -15,11 +13,27 @@ module.exports = function(RED) {
             if (server) {
                 node.status({fill:"green",shape:"dot",text:"connected"});
                 var methodName = utils.getMethodName(config.service, config.method);
-                server.protoFunctions[methodName] = function(call) {
-                    node.send({
-                        call : call,
-                        payload: call.request
-                    });
+                server.protoFunctions[methodName] = function() {
+                    var message = {};
+                    var args = null
+
+                    if (arguments && arguments.length == 1) {
+                        args = arguments [0];
+                    }
+                    // Stream (call) or message (call and callback)
+                    if (args && args.length == 2) {
+                        message = {
+                            call : args[0],
+                            callback: args[1],
+                            payload: args[0].request
+                        }
+                    } else {
+                        message = {
+                            call : args[0],
+                            payload: args[0].request
+                        }
+                    }
+                    node.send(message);
                 };
             }
         } catch(err) {
@@ -31,14 +45,7 @@ module.exports = function(RED) {
             node.error("gRpcRegisterFuctionNode Error - " + error);
             console.log(error);
         });
-		
-        node.on("close", function(done) {
-            stopServer();
-            console.log("gRPC server stopped");
-            done();
-        });
     }
-    	
-	/****************************** Register *******************************/	
-	RED.nodes.registerType("grpc-register-function",gRpcRegisterFuctionNode);
+
+    RED.nodes.registerType("grpc-register-function",gRpcRegisterFuctionNode);
 };

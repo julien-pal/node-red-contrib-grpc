@@ -3,7 +3,6 @@ module.exports = function(RED) {
 	
 	let grpc = require("grpc");
 	
-	/****************************** gRpc response *******************************/ 
 	function gRpcResponseNode(config) {
         var node = this;
 		RED.nodes.createNode(node, config);
@@ -15,9 +14,18 @@ module.exports = function(RED) {
 					node.status({fill:"red",shape:"dot",text:"no call in msg"});
 				} else {
 					if (msg.err) {
-                        msg.call.write(msg.err);
+                        if (msg.callback) {
+                            msg.callback(msg.err);
+                        } else {
+                            msg.call.emmit('error', msg.err);
+                            msg.end();
+                        }
 					} else {
-						msg.call.write(msg.payload);
+                        if (msg.callback) {
+                            msg.callback(null, msg.payload);
+                        } else {
+                            msg.call.write(msg.payload);
+                        }
 					}
 				}		 	
 			} catch (err) {
@@ -31,7 +39,5 @@ module.exports = function(RED) {
         });
     }
 
-	
-	/****************************** Register *******************************/
 	RED.nodes.registerType("grpc-response",gRpcResponseNode);
 };

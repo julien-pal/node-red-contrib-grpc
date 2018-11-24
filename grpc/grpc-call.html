@@ -1,0 +1,68 @@
+<!-- ***************** gRPC Register function *********************** -->
+<script type="text/x-red" data-template-name="grpc-call">
+    <div class="form-row">
+        <label for="node-input-server" style="width: 110px;"><i class="fa fa-bookmark"></i> Server</label>
+        <input type="text" id="node-input-server" placeholder="Server URL (ex. localhost:5001)">
+    </div>	
+    <div class="form-row">
+        <label for="node-input-name" style="width: 110px;"><i class="fa fa-tag"></i> Name</label>
+        <input type="text" id="node-input-name" placeholder="Name">
+    </div>
+    <div class="form-row">
+        <label for="node-input-service" style="width: 110px;"><i class="fa fa-envelope"></i> Service</label>
+        <input type="text" id="node-input-service" placeholder="Service name">
+    </div>
+    <div class="form-row">
+        <label for="node-input-method" style="width: 110px;"><i class="fa fa-tag"></i> Method</label>
+        <input type="text" id="node-input-method" placeholder="Method name">
+    </div>
+    <div class="form-row">
+        <label for="node-input-returnStream"><i class="fa fa-random"></i> Returns a stream </label>
+        <label for="node-input-returnStream" style="width:70%">
+        <input type="checkbox" id="node-input-returnStream" style="display:inline-block; width:22px; vertical-align:baseline;"><span data-i18n="debug.toSidebar"></span>
+        </label>
+    </div>
+</script>
+
+<script type="text/x-red" data-help-name="grpc-call">
+    <p>Sends gRPC requests and returns the response.</p>
+    <h3>Inputs</h3>
+    <dl class="message-properties">
+        <dt class="optional">service <span class="property-type">string</span></dt>
+        <dd>If not configured in the node, this optional property sets the service to request.</dd>
+        <dt class="optional">method <span class="property-type">string</span></dt>
+        <dd>If not configured in the node, this optional property sets the method of the service to request.</dd>
+        <dt class="optional">returnStream <span class="property-type">boolean</span></dt>
+        <dd>If not configured in the node, this optional property sets if the method registers to a stream or not.</dd>
+        <dt class="optional">payload</dt>
+        <dd>Sent as the body of the request.</dd>
+    </dl>
+    <h3>Outputs</h3>
+    <dl class="message-properties">
+        <dt>payload <span class="property-type">string | object</span></dt>
+        <dd>The body of the response.</dd>
+    </dl>
+</script>
+
+<script type="text/javascript">
+    RED.nodes.registerType('grpc-call',{
+        category: 'function',
+        color:"#2DA6B0",
+        defaults: {
+            name: {value:""},
+            server: {type:"grpc-server",required:true},
+            service: {value:"",required:true},
+            method: {value:"",required:true} ,
+            returnStream: {value: false}         
+        },
+        inputs:1,
+        outputs:1,
+        icon: "grpc.svg",
+        label: function() {
+            return this.name||"gRPC Call";
+        },
+        labelStyle: function() {
+            return (this.name)?"node_label_italic":"";
+        }
+    });
+</script>

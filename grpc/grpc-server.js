@@ -7,7 +7,7 @@ module.exports = function (RED) {
     function gRpcServerNode(config) {
         var node = this;
         RED.nodes.createNode(node, config);
-        node.server = "0.0.0.0";
+        node.server =  config.server || "0.0.0.0";
         node.port = config.port || 5001;
         node.name = config.name;
         node.protoFile = config.protoFile;
@@ -34,7 +34,6 @@ module.exports = function (RED) {
 
     function createGRPCServer(node) {
         try {
-            var server = new grpc.Server();
             var protoFunctions = {};
             var fileName =  utils.tempFile('proto.txt', node.protoFile)
 			
@@ -47,30 +46,35 @@ module.exports = function (RED) {
                     oneofs: true
                 })
             );
-            
-            // Parse the proto file
-            var services = proto;
-            if (node.protoPackage) {
-                services = proto[node.protoPackage];
-            }
-            var servicesNames = Object.keys(services); 
-            // For each service
-            for(var i in servicesNames) {
-                var methods = Object.keys(services[servicesNames[i]].service);
-                // For each methods of the service
-                for(var j in methods) {
-                    protoFunctions[methods[j]] = generateFunction(node, servicesNames[i], methods[j], protoFunctions);
+             
+            // If we start a local server
+            if (node.server === '0.0.0.0') {
+                var server = new grpc.Server();
+                // Parse the proto file
+                var services = proto;
+                if (node.protoPackage) {
+                    services = proto[node.protoPackage];
                 }
-                // Add stub methods for each methods and services declared in the proto file
-                server.addService(services[servicesNames[i]].service, protoFunctions)		
+                var servicesNames = Object.keys(services); 
+                // For each service
+                for(var i in servicesNames) {
+                    var methods = Object.keys(services[servicesNames[i]].service);
+                    // For each methods of the service
+                    for(var j in methods) {
+                        protoFunctions[methods[j]] = generateFunction(node, servicesNames[i], methods[j], protoFunctions);
+                    }
+                    // Add stub methods for each methods and services declared in the proto file
+                    server.addService(services[servicesNames[i]].service, protoFunctions)		
+                }
+                
+                server.bind(node.server + ":" + node.port, grpc.ServerCredentials.createInsecure());
+                server.start();
+                console.log("### GRPC Server started ### ");
+                node.protoFunctions = protoFunctions;
+                node.grpcServer = server;		
             }
-
-            server.bind(node.server + ":" + node.port, grpc.ServerCredentials.createInsecure());
-            server.start();
-
-            console.log("### GRPC Server started ### ");
-            node.protoFunctions = protoFunctions;
-            node.grpcServer = server;		
+            node.proto = proto;
+                
         } catch (err) {
             node.error("createGRPCServer - " + err);
             console.log(err);
@@ -82,11 +86,11 @@ module.exports = function (RED) {
             var methodName = utils.getMethodName(service, method);
             var body = 
             'if (this["'+ methodName +'"]) { \
-                this["'+ methodName +'"](arguments[0])\
+                this["'+ methodName +'"](arguments)\
             } else { \
-                console.log("Calling unimplemented method '+ method + 'for service' + service + '"); \
+                console.log("Calling unimplemented method '+ method + ' for service ' + service + '"); \
             }';
-            var func = new Function('call', body);
+            var func = new Function(body);
             return func;
         } catch (err) {
             node.error("generateFunction - " + err);
@@ -96,6 +100,7 @@ module.exports = function (RED) {
 	}
    
     function stopServer(node) {
+        console.log("#### Stoping server ")
         try {
             if (node.grpcServer) {
                 node.grpcServer.forceShutdown();

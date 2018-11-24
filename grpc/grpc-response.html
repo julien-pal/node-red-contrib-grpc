@@ -1,7 +1,7 @@
 <!-- ***************** gRPC RESPONSE *********************** -->
 <script type="text/x-red" data-template-name="grpc-response">	
     <div class="form-row">
-        <label for="node-input-name" style="width: 110px;"><i class="fa fa-tag"></i>Name</label>
+        <label for="node-input-name" style="width: 110px;"><i class="fa fa-tag"></i> Name</label>
         <input type="text" id="node-input-name" placeholder="Name">
     </div>
 </script>
@@ -25,6 +25,7 @@
                     status: "error",
                     message: "error 400"
                 }
+                Caution : if an error is sent it will close the stream (call.end()).
                 Otherwise it will send the msg.payload as data.
         </dd>
     </dl>

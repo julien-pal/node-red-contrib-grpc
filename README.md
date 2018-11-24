@@ -7,7 +7,7 @@
 
 Based on [gRPC][2] 
 
-Provides server and client side implementation of gRPC
+Provides server and client side implementation of gRPC.
 
 
 ## Install
@@ -22,8 +22,8 @@ Run the following command for global install
 
 # Server Side
 
-This package provides some nodes (grpc-register-function, grpc-response and grpc-server) for a server side implementation for gRPC service.
-It will start a gRPC server according to the server implementation (grpc-server node) and register services methods (with grpc-register-function node) and provide a response to your gRPC client (with grpc-response node).
+This package provides some nodes (grpc-register-function, grpc-response and grpc-server) for a server side implementation of a gRPC service.
+It will start a gRPC server according to the server configuration (grpc-server node) and register services methods (with grpc-register-function node) and provide a response to your gRPC client (with grpc-response node).
 
 ## grpc-server node
 
@@ -47,13 +47,13 @@ Each time a client call the specified method a the specified service, this node 
 
 ## grpc-response node
 
-This node will be use to provide a reponse to the gRPC client that called our service.
+This node will be use to send the reponse to the gRPC client that called our service.
 It will send the content of the msg.payload using the msg.call to write the data.
 
 # Client Side
 
-Not implemented yet 
-
+This package provides a node (grpc-call) for a client side implementation of a gRPC service.
+It will connect to a gRPC server according to the server configuration (grpc-server node) and call the method of the service configured on the node.
 
 [1]:https://nodered.org
 [2]:https://www.npmjs.com/package/grpc
