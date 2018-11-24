@@ -20,13 +20,28 @@
 </script>
 
 <script type="text/x-red" data-help-name="grpc-register-function">
-    <p>Connects to a server using the grpc protocol to call a function.</p>
+    <p>Creates an gRPC end-point for creating gRPC services. <p> 
+    <h3>Outputs</h3>
+    <dl class="message-properties">
+        <dt>payload</dt>
+        <dd>
+            Contains the client call parameters (call.request).
+            Will be null for a for a proto Stream input.
+        </dd>
+        <dt>call</dt>
+        <dd>
+            Contains the client gRPC call to which we have to respond to.
+        </dd>
+    </dl>
+    <p><b>Note:</b> this node does not send any response to the request. The flow
+        must include an gRPC Response node to complete the request.</p>
+        
 </script>
 
 <script type="text/javascript">
     RED.nodes.registerType('grpc-register-function',{
         category: 'input',
-        color:"#0FBBEC",
+        color:"#2DA6B0",
         defaults: {
             name: {value:""},
             server: {type:"grpc-server",required:true},
@@ -35,7 +50,7 @@
         },
         inputs:0,
         outputs:1,
-        icon: "deepstream.svg",
+        icon: "grpc.svg",
         label: function() {
             return this.name||"gRPC Register";
         },

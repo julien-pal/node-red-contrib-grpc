@@ -7,28 +7,39 @@
 </script>
 
 <script type="text/x-red" data-help-name="grpc-response">
-	<p> Send response to grpc </p>
-	<p> 
-        If msg.err is not empty, it sends an error response with the content of msg.err.
-        msg.err format : 
-        {
-            code:  400,
-            status: "error",
-            message: "error 400"
-        }
-        Otherwise it will send the msg.payload as data.
-     </p>
+	<p> Sends responses back to requests received from an gRPC Input node.</p>
+	<h3>Input</h3>
+    <dl class="message-properties">
+        <dt>payload</dt>
+        <dd>The reponse of the gRPC call</dd>
+        <dt>call</dt>
+        <dd>
+            Contains the client gRPC call to which respond.
+        </dd>
+        <dt>err</dt>
+        <dd>
+                If msg.err is not empty, it sends an error response with the content of msg.err.
+                msg.err format : 
+                {
+                    code:  400,
+                    status: "error",
+                    message: "error 400"
+                }
+                Otherwise it will send the msg.payload as data.
+        </dd>
+    </dl>
 </script>
 
 <script type="text/javascript">
     RED.nodes.registerType('grpc-response',{
         category: 'output',
-        color:"#0FBBEC",
+        color:"#2DA6B0",
         defaults: {
             name: {value:""}
         },
         inputs:1,
         outputs:0,
+        icon: "grpc.svg",
 		align: 'right',
         label: function() {
             return this.name||"gRPC Response";
