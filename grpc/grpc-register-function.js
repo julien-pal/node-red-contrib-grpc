@@ -2,14 +2,6 @@ module.exports = function(RED) {
 	"use strict";
     var utils = require('../utils/utils');
 
-	function getGRPCServer(node, config, protoFunctions, callback) {
-		if (!server) {
-			let serverConf = RED.nodes.getNode(config.server);
-			createGRPCServer(serverConf);
-		}
-		callback(protoFunctions);
-	}
-
 	/****************************** gRpc register function *******************************/
 		
     function gRpcRegisterFuctionNode(config) {

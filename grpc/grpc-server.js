@@ -1,7 +1,7 @@
 module.exports = function (RED) {
     'use strict'
-    let utils = require('../utils/utils');
     let grpc = require("grpc");
+    let utils = require('../utils/utils');
 	var protoLoader = require("@grpc/proto-loader");
 
     function gRpcServerNode(config) {
@@ -31,8 +31,6 @@ module.exports = function (RED) {
             done();
         });
     }	
-
-
 
     function createGRPCServer(node) {
         try {
@@ -83,7 +81,7 @@ module.exports = function (RED) {
         try {
             var methodeName = utils.getMethodeName(service, method);
             var body = 'console.log("Calling '+ service + '_' + method + '");';
-            body += 'if (this["'+ methodeName +'"]){ this["'+ methodeName +'"](arguments[0]) }';
+            body += 'if (this["'+ methodeName +'"]){ this["'+ methodeName +'"](arguments[0])}';
             var func = new Function('call', body);
             return func;
         } catch (err) {
