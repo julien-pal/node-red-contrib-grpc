@@ -10,16 +10,14 @@ module.exports = function(RED) {
 
 		node.on("input", function(msg) {
 			try {				
-				console.log("gRpcResponseNode on input")
 				if (!msg.call) {
 					node.error('Error, no call in message');
 					node.status({fill:"red",shape:"dot",text:"no call in msg"});
 				} else {
 					if (msg.err) {
-						msg.callback(msg.err);
+                        msg.call.write(msg.err);
 					} else {
 						msg.call.write(msg.payload);
-						msg.call.end();
 					}
 				}		 	
 			} catch (err) {

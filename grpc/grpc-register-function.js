@@ -14,11 +14,10 @@ module.exports = function(RED) {
             var server = RED.nodes.getNode(config.server)
             if (server) {
                 node.status({fill:"green",shape:"dot",text:"connected"});
-                var methodeName = utils.getMethodeName(config.service, config.method);
-                server.protoFunctions[methodeName] = function(call, callback) {
+                var methodName = utils.getMethodName(config.service, config.method);
+                server.protoFunctions[methodName] = function(call) {
                     node.send({
                         call : call,
-                        callback : callback,
                         payload: call.request
                     });
                 };

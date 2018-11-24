@@ -56,12 +56,12 @@ module.exports = function (RED) {
             var servicesNames = Object.keys(services); 
             // For each service
             for(var i in servicesNames) {
-                var methodes = Object.keys(services[servicesNames[i]].service);
-                // For each method of the service
-                for(var j in methodes) {
-                    protoFunctions[methodes[j]] = generateFunction(node, servicesNames[i], methodes[j], protoFunctions);
+                var methods = Object.keys(services[servicesNames[i]].service);
+                // For each methods of the service
+                for(var j in methods) {
+                    protoFunctions[methods[j]] = generateFunction(node, servicesNames[i], methods[j], protoFunctions);
                 }
-                // Add stub methodes for each methods and services declared in the proto file
+                // Add stub methods for each methods and services declared in the proto file
                 server.addService(services[servicesNames[i]].service, protoFunctions)		
             }
 
@@ -79,9 +79,13 @@ module.exports = function (RED) {
 
     function generateFunction(node, service, method) {
         try {
-            var methodeName = utils.getMethodeName(service, method);
-            var body = 'console.log("Calling '+ service + '_' + method + '");';
-            body += 'if (this["'+ methodeName +'"]){ this["'+ methodeName +'"](arguments[0])}';
+            var methodName = utils.getMethodName(service, method);
+            var body = 
+            'if (this["'+ methodName +'"]) { \
+                this["'+ methodName +'"](arguments[0])\
+            } else { \
+                console.log("Calling unimplemented method '+ method + 'for service' + service + '"); \
+            }';
             var func = new Function('call', body);
             return func;
         } catch (err) {

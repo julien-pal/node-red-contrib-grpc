@@ -19,12 +19,12 @@ function tempFile (name = 'temp_file', data = '', encoding = 'utf8') {
     }
 }
 
-function getMethodeName(service, method) {
+function getMethodName(service, method) {
     return service + "_" + method + "_callback";
 }
 
 
 module.exports = {
     tempFile: tempFile,
-    getMethodeName: getMethodeName
+    getMethodName: getMethodName
 }
