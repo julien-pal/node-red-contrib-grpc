@@ -1,0 +1,40 @@
+<!-- ***************** gRPC RESPONSE *********************** -->
+<script type="text/x-red" data-template-name="grpc-response">	
+    <div class="form-row">
+        <label for="node-input-name" style="width: 110px;"><i class="fa fa-tag"></i>Name</label>
+        <input type="text" id="node-input-name" placeholder="Name">
+    </div>
+</script>
+
+<script type="text/x-red" data-help-name="grpc-response">
+	<p> Send response to grpc </p>
+	<p> 
+        If msg.err is not empty, it sends an error response with the content of msg.err.
+        msg.err format : 
+        {
+            code:  400,
+            status: "error",
+            message: "error 400"
+        }
+        Otherwise it will send the msg.payload as data.
+     </p>
+</script>
+
+<script type="text/javascript">
+    RED.nodes.registerType('grpc-response',{
+        category: 'output',
+        color:"#0FBBEC",
+        defaults: {
+            name: {value:""}
+        },
+        inputs:1,
+        outputs:0,
+		align: 'right',
+        label: function() {
+            return this.name||"gRPC Response";
+        },
+        labelStyle: function() {
+            return (this.name)?"node_label_italic":"";
+        }
+    });
+</script>
