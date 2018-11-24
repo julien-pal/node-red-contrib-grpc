@@ -12,8 +12,6 @@ module.exports = function (RED) {
         // read the package name from the protoFile
         var packageName = config.protoFile.match(new RegExp(/package ([^;]*);/));
         if (packageName && packageName.length == 2) {
-            console.log("Package found", packageName);
-            console.log("Package", packageName[1]);
             node.protoPackage = packageName[1];
         }
     }	

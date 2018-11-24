@@ -15,10 +15,8 @@ module.exports = function(RED) {
 	}
 
 	function generateFunction(service, method, methodes) {
-		console.log("functions", methodes);
 		var methodeName = getMethodeName(service, method);
 		var body = 'console.log("Calling '+ service + '_' + method + '");';
-		body +=  'console.log("this", this);';
 		body += 'if (this["'+ methodeName +'"]){ this["'+ methodeName +'"](arguments[0]) }';
 		var func = new Function('call', body);
 		func.bind(methodes);
@@ -33,9 +31,6 @@ module.exports = function(RED) {
 	}
 
 	function createGRPCServer(serverConf) {
-        console.log("##createGRPCServer##")
-        console.log("serverConf", serverConf)
-        
 		server = new grpc.Server();
 		var fileName =  tempFile('proto.txt', serverConf.protoFile)
 			
@@ -49,28 +44,32 @@ module.exports = function(RED) {
 			})
 		);
 
-		var services = Object.keys(proto[serverConf.protoPackage]); 
-		for(var i in services) {
-			var methodes = Object.keys(proto[serverConf.protoPackage][services[i]].service);
+        // Parse the proto file
+        var services = proto;
+        if (serverConf.protoPackage) {
+            services = proto[serverConf.protoPackage];
+        }
+        var servicesNames = Object.keys(services); 
+        // For each service
+		for(var i in servicesNames) {
+            var methodes = Object.keys(services[servicesNames[i]].service);
+            // For each method of the service
 			for(var j in methodes) {
-				protoFunctions[methodes[j]] = generateFunction(services[i], methodes[j], protoFunctions);
-			}
+				protoFunctions[methodes[j]] = generateFunction(servicesNames[i], methodes[j], protoFunctions);
+            }
+            // Add stub methodes for each methods and services declared in the proto file
+            server.addService(services[servicesNames[i]].service, protoFunctions)		
 		}
-		console.log("protoFunctions", protoFunctions);
-		server.addService(proto.example.Chat.service, protoFunctions)		
 		server.bind(serverConf.server + ":" + serverConf.port, grpc.ServerCredentials.createInsecure());
 		server.start();
-		console.log("Server started");
+		console.log("### GRPC Server started ### ");
 		return server;		
 	}
 
 	function getGRPCServer(node, config, protoFunctions, callback) {
 		if (!server) {
-			console.log("PAS DE SERVER ")
 			let serverConf = RED.nodes.getNode(config.server);
 			createGRPCServer(serverConf);
-		} else {
-			console.log("SERVER ")
 		}
 		callback(protoFunctions);
 	}
@@ -96,20 +95,17 @@ module.exports = function(RED) {
 		node.status({fill:"grey",shape:"ring",text:"connecting"});
 		getGRPCServer(node, config, protoFunctions,  function(protoFunctions) {
 			try {
-				console.log("getGRPCServer", protoFunctions);				
 				node.status({fill:"green",shape:"dot",text:"connected"});
 				var methodeName = getMethodeName(config.service, config.method);
 				protoFunctions[methodeName] = function(call, callback) {
-					console.log("toto")
 					node.send({
 						call : call,
 						callback : callback,
 						payload: call.request
 					});
 				};
-				console.log("getGRPCServer", protoFunctions);
 			} catch(err) {
-				node.error(err);
+				node.error("gRpcRegisterFunctionNode - getGRPCServrt" + err);
 			}
 		});
 				
@@ -118,7 +114,8 @@ module.exports = function(RED) {
         });
 		
         node.on("close", function(done) {
-			stopServer();
+            stopServer();
+            console.log("gRPC server stopped");
             done();
         });
     }

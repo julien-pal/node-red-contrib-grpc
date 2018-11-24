@@ -23,6 +23,7 @@ module.exports = function(RED) {
 					}
 				}		 	
 			} catch (err) {
+                console.log("Error - gRpcResponseNode - onInput", err);
 				node.error(err);
 			}						
 		});
