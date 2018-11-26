@@ -10,7 +10,7 @@ module.exports = function(RED) {
         try {
             // Get the gRPC server from the server config Node
             var server = RED.nodes.getNode(config.server)
-            if (server) {
+            if (server && server.protoFunctions) {
                 node.status({fill:"green",shape:"dot",text:"connected"});
                 var methodName = utils.getMethodName(config.service, config.method);
                 server.protoFunctions[methodName] = function() {
@@ -35,6 +35,8 @@ module.exports = function(RED) {
                     }
                     node.send(message);
                 };
+            } else {
+                node.status({fill:"red",shape:"dot",text:"No local server started"});
             }
         } catch(err) {
             node.error("gRpcRegisterFunctionNode - getGRPCServrt" + err);

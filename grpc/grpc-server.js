@@ -5,12 +5,17 @@ module.exports = function (RED) {
 	var protoLoader = require("@grpc/proto-loader");
 
     function gRpcServerNode(config) {
+        console.log("Server Node config", config);
+
         var node = this;
         RED.nodes.createNode(node, config);
         node.server =  config.server || "0.0.0.0";
         node.port = config.port || 5001;
         node.name = config.name;
         node.protoFile = config.protoFile;
+        node.localServer = config.localServer;
+
+        console.log("Server node", node);
 
         // read the package name from the protoFile
         var packageName = config.protoFile.match(new RegExp(/package ([^;]*);/));
@@ -26,8 +31,10 @@ module.exports = function (RED) {
         });
 		
         node.on("close", function(done) {
-            stopServer(this);
-            console.log("### gRPC server stopped ###");
+            if (this.localServer) {
+                stopServer(this);
+                console.log("### gRPC server stopped ###");
+            }
             done();
         });
     }	
@@ -48,7 +55,7 @@ module.exports = function (RED) {
             );
              
             // If we start a local server
-            if (node.server === '0.0.0.0') {
+            if (node.localServer) {
                 var server = new grpc.Server();
                 // Parse the proto file
                 var services = proto;
