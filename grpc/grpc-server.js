@@ -5,8 +5,6 @@ module.exports = function (RED) {
 	var protoLoader = require("@grpc/proto-loader");
 
     function gRpcServerNode(config) {
-        console.log("Server Node config", config);
-
         var node = this;
         RED.nodes.createNode(node, config);
         node.server =  config.server || "0.0.0.0";
@@ -14,8 +12,6 @@ module.exports = function (RED) {
         node.name = config.name;
         node.protoFile = config.protoFile;
         node.localServer = config.localServer;
-
-        console.log("Server node", node);
 
         // read the package name from the protoFile
         var packageName = config.protoFile.match(new RegExp(/package ([^;]*);/));
