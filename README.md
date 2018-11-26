@@ -27,18 +27,18 @@ It will start a gRPC server according to the server configuration (grpc-server n
 
 ## grpc-server node
 
-This node will be use to configure a local gRPC server with the following parameters :
-    * server ip : 0.0.0.0 (not editable since it's a local server)
-    * server port : default value 5001;
-    * protoFile : proto buffer definition of the services to provide;
+This node will be use to configure a local gRPC server with the following parameters :   
+* server ip : 0.0.0.0 (not editable since it's a local server)
+* server port : default value 5001;
+* protoFile : proto buffer definition of the services to provide;
 
 ## grpc-register-function node
 
 This node will be use to provide a service method implementation.
-The node requires the following configuration :
-    * server: a grpc-server configuration node
-    * service: the service name we will implement
-    * method: the methode name of the service we will implement
+The node requires the following configuration :   
+* server: a grpc-server configuration node
+* service: the service name we will implement
+* method: the methode name of the service we will implement
 
 Each time a client call the specified method a the specified service, this node will send a msg containing:
 * payload : request parameters
