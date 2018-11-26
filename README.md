@@ -1,7 +1,7 @@
 
 # node-red-contrib-grpc
 
-## The all in one gRPCcontribution package for Node-RED.
+## The all in one gRPC contribution package for Node-RED.
 
 [Node-RED][1] contribution package for [gRPC][2]
 
@@ -40,7 +40,7 @@ The node requires the following configuration :
 * service: the service name we will implement
 * method: the methode name of the service we will implement
 
-Each time a client call the specified method a the specified service, this node will send a msg containing:
+Each time a client call the specified method a the specified service, this node will send a msg containing:   
 * payload : request parameters
 * call : the call which we will answer to 
 
