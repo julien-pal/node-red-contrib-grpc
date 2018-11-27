@@ -14,7 +14,7 @@ module.exports = function (RED) {
         node.localServer = config.localServer;
 
         // read the package name from the protoFile
-        var packageName = config.protoFile.match(new RegExp(/package ([^;]*);/));
+        var packageName = config.protoFile.match(new RegExp(/package\s+([^;="]*);/));
         if (packageName && packageName.length == 2) {
             node.protoPackage = packageName[1];
         }
@@ -49,7 +49,7 @@ module.exports = function (RED) {
                     oneofs: true
                 })
             );
-             
+           
             // If we start a local server
             if (node.localServer) {
                 var server = new grpc.Server();
