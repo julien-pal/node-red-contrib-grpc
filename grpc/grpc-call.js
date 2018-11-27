@@ -13,8 +13,7 @@ module.exports = function (RED) {
                 // overring config with msg content
                 config.service = config.service || msg.service;
                 config.methode = config.methode || msg.methode;
-                config.returnStream = config.returnStream || msg.returnStream;
-
+                
                 try {
                     const REMOTE_SERVER = serverNode.server + ":" + serverNode.port;
                     //Create gRPC client
@@ -24,6 +23,8 @@ module.exports = function (RED) {
                     }
                     if (!proto[config.service]) {
                         node.status({fill:"red",shape:"dot",text: "Service " + config.service + " not in proto file"});
+                    } else if (!proto[config.service].service[config.method]) {
+                        node.status({fill:"red",shape:"dot",text: "Method " + config.method + " not in proto file for service " +  config.service });
                     } else {
                         node.status({});
                         node.client = new proto[config.service](
@@ -37,7 +38,7 @@ module.exports = function (RED) {
                             node.status({fill:"red",shape:"dot",text: "Method " + config.method + " not in proto file"});
                         } else {
                             node.status({});
-                            if (config.returnStream) {
+                            if (proto[config.service].service[config.method].responseStream) {
                                 node.channel = node.client[config.method](msg.payload);
                                 node.channel.on("data", function (data) {
                                     msg.payload = data;

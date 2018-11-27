@@ -16,10 +16,6 @@
         <label for="node-input-method" style="width: 110px;"><i class="fa fa-tag"></i> Method</label>
         <input type="text" id="node-input-method" placeholder="Method name">
     </div>
-    <div class="form-row">
-        <input type="checkbox" id="node-input-returnStream" style="display: inline-block; width: auto; vertical-align: top;">
-        <label for="node-input-returnStream" style="width: auto">Returns a stream</label>
-    </div>
 </script>
 
 <script type="text/x-red" data-help-name="grpc-call">
@@ -30,8 +26,6 @@
         <dd>If not configured in the node, this optional property sets the service to request.</dd>
         <dt class="optional">method <span class="property-type">string</span></dt>
         <dd>If not configured in the node, this optional property sets the method of the service to request.</dd>
-        <dt class="optional">returnStream <span class="property-type">boolean</span></dt>
-        <dd>If not configured in the node, this optional property sets if the method registers to a stream or not.</dd>
         <dt class="optional">payload</dt>
         <dd>Sent as the body of the request.</dd>
     </dl>
@@ -50,8 +44,7 @@
             name: {value:""},
             server: {type:"grpc-server",required:true},
             service: {value:"",required:true},
-            method: {value:"",required:true} ,
-            returnStream: {value: false}         
+            method: {value:"",required:true}  
         },
         inputs:1,
         outputs:1,
