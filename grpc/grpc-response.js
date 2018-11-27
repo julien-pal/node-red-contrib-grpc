@@ -24,7 +24,14 @@ module.exports = function(RED) {
                         if (msg.callback) {
                             msg.callback(null, msg.payload);
                         } else {
-                            msg.call.write(msg.payload);
+							if (Array.isArray(msg.payload)) {
+								for (var i in msg.payload) {
+									msg.call.write(msg.payload[i]);
+								}
+							} else {
+								msg.call.write(msg.payload);
+							}
+
                         }
 					}
 				}		 	
