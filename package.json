@@ -8,7 +8,8 @@
 			"grpc-server-config": "grpc/grpc-server.js",
 			"grpc-register-function": "grpc/grpc-register-function.js",
 			"grpc-response": "grpc/grpc-response.js",
-			"grpc-call": "grpc/grpc-call.js"
+			"grpc-call": "grpc/grpc-call.js",
+			"grpc-client-streaming": "grpc/grpc-client-streaming.js"
 		}
 	},
 	"repository": {
