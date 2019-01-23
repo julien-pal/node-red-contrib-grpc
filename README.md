@@ -52,8 +52,18 @@ It will send the content of the msg.payload using the msg.call to write the data
 
 # Client Side
 
+## grpc-call node
 This package provides a node (grpc-call) for a client side implementation of a gRPC service.
 It will connect to a gRPC server according to the server configuration (grpc-server node) and call the method of the service configured on the node.
+
+## grpc-client-streaming node
+
+It will connect to a gRPC server according to the server configuration (grpc-server node) and call the method of the service configured on the node.
+This node opens a gRPC request, expects the streaming content at payload and returns the response if the stream is closed. 
+The client streaming channel will be opened on the first payload that arrives. 
+Further payloads use the existing client stream. If you send a message with the topic 'close'.
+The client stream will close and publish the result of the server response. 
+If any error occurs the connection will be closed and a message with the error property set will be published.
 
 [1]:https://nodered.org
 [2]:https://www.npmjs.com/package/grpc
