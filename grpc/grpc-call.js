@@ -12,7 +12,7 @@ module.exports = function (RED) {
             node.on("input", function (msg) {
                 // overring config with msg content
                 config.service = config.service || msg.service;
-                config.methode = config.methode || msg.methode;
+                config.method = config.method || msg.method;
                 
                 try {
                     const REMOTE_SERVER = serverNode.server + ":" + serverNode.port;
