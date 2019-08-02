@@ -50,6 +50,11 @@ module.exports = function (RED) {
                                         msg.error = error;
                                         node.send(msg);
                                     });
+                                    
+                                    node.channel.on("end",function () {
+                                        msg.payload = { "status": "Server finished sending" };
+                                        node.send(msg);
+                                    });
                                 }
                             } else {
                                 node.client[config.method](msg.payload, function(error, data) {
