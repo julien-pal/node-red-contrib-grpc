@@ -62,7 +62,7 @@ module.exports = function (RED) {
                     node.status({fill:"green",shape:"dot",text: "Connected to " +  REMOTE_SERVER });
                     node.call.write(msg.payload);
                 } catch (err) {
-                    node.log("onInput" + err);
+                    node.error("onInput" + err);
                     console.log(err);
                 }
 
