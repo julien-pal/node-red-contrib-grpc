@@ -40,23 +40,17 @@ module.exports = function (RED) {
                         } else {
                             node.status({});
                             if (proto[config.service].service[config.method].responseStream) {
-                                if (!node.channel) {
-                                    node.channel = node.client[config.method](msg.payload);
-                                    node.channel.on("data", function (data) {
-                                        msg.payload = data;
-                                        node.send(msg);
-                                    });
-    
-                                    node.channel.on("error",function (error) {
-                                        msg.error = error;
-                                        node.send(msg);
-                                    });
-                                    
-                                    node.channel.on("end",function () {
-                                        msg.payload = { "status": "Server finished sending" };
-                                        node.send(msg);
-                                    });
-                                }
+                                node.channel = node.client[config.method](msg.payload);
+                                node.channel.on("data", function (data) {
+                                    msg.payload = data;
+                                    node.send(msg);
+                                });
+
+                                node.channel.on("error",function (error) {
+                                    msg.error = error;
+                                    node.send(msg);
+                                });
+
                             } else {
                                 node.client[config.method](msg.payload, function(error, data) {
                                     msg.payload = data;
