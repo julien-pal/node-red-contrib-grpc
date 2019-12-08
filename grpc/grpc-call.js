@@ -1,6 +1,7 @@
 module.exports = function (RED) {
     "use strict";
     let grpc = require("grpc");
+    let getByPath = require('lodash.get');
 
     function gRpcCallNode(config) {
         try {
@@ -19,7 +20,7 @@ module.exports = function (RED) {
                     //Create gRPC client
                     var proto =  serverNode.proto;
                     if (serverNode.protoPackage) {
-                        proto = serverNode.proto[serverNode.protoPackage];
+                        proto = getByPath(serverNode.proto, serverNode.protoPackage);
                     }
                     if (!proto[config.service]) {
                         node.status({fill:"red",shape:"dot",text: "Service " + config.service + " not in proto file"});
@@ -49,6 +50,7 @@ module.exports = function (RED) {
                                     msg.error = error;
                                     node.send(msg);
                                 });
+
                             } else {
                                 node.client[config.method](msg.payload, function(error, data) {
                                     msg.payload = data;

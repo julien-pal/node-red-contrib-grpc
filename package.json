@@ -22,7 +22,8 @@
 	],
 	"dependencies": {
 		"@grpc/proto-loader": "^0.3.0",
-		"grpc": "^1.16.0"
+		"grpc": "^1.16.0",
+		"lodash.get": "^4.4.2"
 	},
 	"author": "Julien Pal",
 	"license": "ISC"
