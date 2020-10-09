@@ -4,6 +4,7 @@ module.exports = function (RED) {
     let grpc = require("@grpc/grpc-js");
     let utils = require('../utils/utils');
 	  let protoLoader = require("@grpc/proto-loader");
+    let getByPath = require('lodash.get');
 
     function gRpcServerNode(config) {
         var node = this;
@@ -76,7 +77,7 @@ module.exports = function (RED) {
                 // Parse the proto file
                 var services = proto;
                 if (node.protoPackage) {
-                    services = proto[node.protoPackage];
+                    services = getByPath(proto, node.protoPackage);
                 }
                 // For each service
                 for (var serviceName in services) {
