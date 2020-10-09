@@ -21,8 +21,8 @@
 		"gRpc"
 	],
 	"dependencies": {
-		"@grpc/proto-loader": "^0.3.0",
-		"grpc": "^1.16.0",
+		"@grpc/proto-loader": "^0.5.5",
+		"@grpc/grpc-js": "^1.1.7",
 		"lodash.get": "^4.4.2"
 	},
 	"author": "Julien Pal",

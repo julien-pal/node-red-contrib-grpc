@@ -16,17 +16,19 @@
         <label for="node-input-method" style="width: 110px;"><i class="fa fa-tag"></i> Method</label>
         <input type="text" id="node-input-method" placeholder="Method name">
     </div>
-    <div class="form-row">
-        <button id="keygen"">Generate bellow</button>
-      </div>
-	<div class="form-row">
-        <label for="node-input-chain">Chain Cert</label>
-        <textarea id="node-input-chain" placeholder="Chain Cert" rows="10" style="width: 100%"></textarea>
+    <div id="mutualTls">
+        <div class="form-row">
+            <button id="keygen"">Generate bellow</button>
+          </div>
+        <div class="form-row">
+            <label for="node-input-chain">Chain Cert</label>
+            <textarea id="node-input-chain" placeholder="Chain Cert" rows="10" style="width: 100%"></textarea>
+        </div>
+        <div class="form-row">
+            <label for="node-input-key">Private Key</label>
+            <textarea id="node-input-key" placeholder="Private Key" rows="10" style="width: 100%"></textarea>
+        </div> 
     </div>
-	<div class="form-row">
-        <label for="node-input-key">Private Key</label>
-        <textarea id="node-input-key" placeholder="Private Key" rows="10" style="width: 100%"></textarea>
-    </div> 
 </script>
 
 <script type="text/x-red" data-help-name="grpc-call">
@@ -69,17 +71,25 @@
             return (this.name)?"node_label_italic":"";
         },
         oneditprepare: function(){
+            $("#node-input-server").change(function(){
+                var config = RED.nodes.node($(this).val());
+    
+                if (config && config.mutualTls){
+                    $("#mutualTls").show();    
+                } else {
+                    $("#mutualTls").hide();
+                }
+            })
+            
             $("#keygen").click(e => {
                 var config = RED.nodes.node($("#node-input-server").val());
-                console.log(config);
-                console.log(this);
 
                 if (!config){
                     alert("Please choose a server first!");
                     return;
                 }
                 
-                const { caPrivateKey, cacert } = config;
+                const { caPrivateKey, cacert, mutualTls } = config;
                 const server = document.getElementById('node-input-server').value;
                 const name = document.getElementById('node-input-name').value;
 

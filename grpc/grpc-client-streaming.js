@@ -1,6 +1,6 @@
 module.exports = function (RED) {
     "use strict";
-    let grpc = require("grpc");
+    let grpc = require("@grpc/grpc-js");
 
     function gClientStreamingNode(config) {
         try {
