@@ -1,8 +1,9 @@
 module.exports = function (RED) {
     'use strict'
+    let fs = require("fs");
     let grpc = require("grpc");
     let utils = require('../utils/utils');
-	var protoLoader = require("@grpc/proto-loader");
+	  let protoLoader = require("@grpc/proto-loader");
 
     function gRpcServerNode(config) {
         var node = this;
@@ -11,6 +12,9 @@ module.exports = function (RED) {
         node.port = config.port || 5001;
         node.name = config.name;
         node.protoFile = config.protoFile;
+        node.ca = config.ca;
+        node.chain = config.chain;
+        node.key = config.key;
         node.localServer = config.localServer;
 
         // read the package name from the protoFile
@@ -49,6 +53,19 @@ module.exports = function (RED) {
                     oneofs: true
                 })
             );
+
+            let credentials;
+            if (node.ca){
+                var ca =  utils.tempFile('ca.txt', node.ca)
+                var chain =  utils.tempFile('chain.txt', node.chain)
+                var key =  utils.tempFile('key.txt', node.key)
+    
+                credentials = grpc.ServerCredentials.createSsl(
+                    fs.readFileSync(ca), [{
+                    cert_chain: fs.readFileSync(chain),
+                    private_key: fs.readFileSync(key)
+                }], true);
+            }
            
             // If we start a local server
             if (node.localServer) {
@@ -70,7 +87,7 @@ module.exports = function (RED) {
                     server.addService(services[servicesNames[i]].service, protoFunctions)		
                 }
                 
-                server.bind(node.server + ":" + node.port, grpc.ServerCredentials.createInsecure());
+                server.bind(node.server + ":" + node.port, credentials || grpc.ServerCredentials.createInsecure());
                 server.start();
                 console.log("### GRPC Server started ### ");
                 node.protoFunctions = protoFunctions;
@@ -116,4 +133,12 @@ module.exports = function (RED) {
 	}
 
     RED.nodes.registerType("grpc-server", gRpcServerNode, {});	
+
+    RED.httpAdmin.get("/node-red-contrib-grpc/*",function(req,res) {
+      var options = {
+          root: __dirname + '/scripts/',
+          dotfiles: 'deny'
+      };
+      res.sendFile(req.params[0], options);
+    });
 }

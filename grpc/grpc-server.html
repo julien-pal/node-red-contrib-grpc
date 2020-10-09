@@ -1,3 +1,6 @@
+<script src="node-red-contrib-grpc/certsgen.js"></script>
+<script src="node-red-contrib-grpc/forge.min-0.7.0.js"></script>
+
 <!-- ***************** SERVER CONFIG *********************** -->
 <script type="text/x-red" data-template-name="grpc-server">
     <div class="form-row">
@@ -18,7 +21,22 @@
     </div>
 	<div class="form-row">
         <label for="node-config-input-protoFile"> Proto File</label>
-        <textarea id="node-config-input-protoFile" placeholder="Proto File" rows="30" style="width: 100%">
+        <textarea id="node-config-input-protoFile" placeholder="Proto File" rows="20" style="width: 100%"></textarea>
+    </div>
+	<div class="form-row">
+    <button id="keygen">Generate bellow</button>
+  </div>
+	<div class="form-row">
+        <label for="node-config-input-ca">CA Cert</label>
+        <textarea id="node-config-input-ca" placeholder="CA Cert" rows="10" style="width: 100%"></textarea>
+    </div>
+	<div class="form-row">
+        <label for="node-config-input-chain">Chain Cert</label>
+        <textarea id="node-config-input-chain" placeholder="Chain Cert" rows="10" style="width: 100%"></textarea>
+    </div>
+	<div class="form-row">
+        <label for="node-config-input-key">Private Key</label>
+        <textarea id="node-config-input-key" placeholder="Private Key" rows="10" style="width: 100%"></textarea>
     </div> 
 </script>
 
@@ -34,12 +52,38 @@
             name: { value: '' },
             server: { value: '' },
             protoFile: { value: '' },
+            ca: { value: '' },
+            caPrivateKey: { value: '' },
+            cacert: { value: '' },
+            caName: { value: '' },
+            caOrgName: { value: '' },
+            chain: { value: '' },
+            key: { value: '' },
             localServer: { value : true },
         },
         icon: "grpc.svg",
         color: "#2DA6B0",
         label: function () {
-            return (this.name ? this.name : localhost + ":" + this.port);
+            return (this.name || "localhost") + ":" + this.port;
+        },
+        oneditprepare: function (){
+          var that = this;
+
+          $("#keygen").click(() => {
+            console.log(this);
+            const { cacert, caPrivateKey } = caCertGen();
+            document.getElementById('node-config-input-ca').value = cacert;
+      
+            const serverName = document.getElementById('node-config-input-server').value;
+            const nodeName = document.getElementById('node-config-input-name').value;
+            
+            const { cert, privateKey } = certGen(cacert, caPrivateKey, serverName, nodeName);
+            document.getElementById('node-config-input-chain').value = cert;
+            document.getElementById('node-config-input-key').value = privateKey;
+
+            that.caPrivateKey = caPrivateKey;
+            that.cacert = cacert;
+          })
         }
     });
 </script>

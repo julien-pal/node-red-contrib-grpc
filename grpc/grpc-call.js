@@ -2,6 +2,8 @@ module.exports = function (RED) {
     "use strict";
     let grpc = require("grpc");
     let getByPath = require('lodash.get');
+    let utils = require('../utils/utils');
+    let fs = require("fs");
 
     function gRpcCallNode(config) {
         try {
@@ -28,9 +30,26 @@ module.exports = function (RED) {
                         node.status({fill:"red",shape:"dot",text: "Method " + config.method + " not in proto file for service " +  config.service });
                     } else {
                         node.status({});
+                        node.ca = serverNode.ca;
+                        node.chain = config.chain;
+                        node.key = config.key;
+
+                        let credentials;
+                        if (node.ca){
+                            var ca =  utils.tempFile('cca.txt', node.ca)
+                            var chain =  utils.tempFile('cchain.txt', node.chain)
+                            var key =  utils.tempFile('ckey.txt', node.key)
+                
+                            credentials = grpc.credentials.createSsl(
+                                fs.readFileSync(ca),
+                                fs.readFileSync(key),
+                                fs.readFileSync(chain),
+                            );
+                        }
+                        
                         node.client = new proto[config.service](
                             REMOTE_SERVER,
-                            grpc.credentials.createInsecure()
+                            credentials || grpc.credentials.createInsecure()
                         );
                     }
 
