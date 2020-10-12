@@ -4,10 +4,6 @@ var os = require('os');
 
 function tempFile (name = 'temp_file', data = '', encoding = 'utf8') {
     try {
-
-        const fs = require('fs');
-        const os = require('os');   
-        
         var dirName = `${os.tmpdir()}/foobar-`;
         dirName = fs.mkdtempSync(dirName);
         var file_name = `${dirName}/${name}`

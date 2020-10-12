@@ -1,7 +1,7 @@
 module.exports = function(RED) {
 	'use strict';
 	
-	let grpc = require("grpc");
+	let grpc = require("@grpc/grpc-js");
 	
 	function gRpcResponseNode(config) {
         var node = this;

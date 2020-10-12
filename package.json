@@ -1,6 +1,6 @@
 {
 	"name": "node-red-contrib-grpc",
-	"version": "1.0.7",
+	"version": "1.1.0",
 	"description": "gRpc Wrapper for NodeRed",
 	"main": "grpc.js",
 	"node-red": {
@@ -21,8 +21,8 @@
 		"gRpc"
 	],
 	"dependencies": {
-		"@grpc/proto-loader": "^0.3.0",
-		"grpc": "^1.16.0",
+		"@grpc/proto-loader": "^0.5.5",
+		"@grpc/grpc-js": "^1.1.7",
 		"lodash.get": "^4.4.2"
 	},
 	"author": "Julien Pal",
