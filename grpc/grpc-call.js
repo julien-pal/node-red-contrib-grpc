@@ -34,20 +34,24 @@ module.exports = function (RED) {
                         node.key = config.key;
 
                         let credentials;
-                        if (serverNode.caPath){
-                            if (serverNode.mutualTls){
-                                var chain =  utils.tempFile('cchain.txt', node.chain)
-                                var key =  utils.tempFile('ckey.txt', node.key)
-                    
-                                credentials = grpc.credentials.createSsl(
-                                    fs.readFileSync(serverNode.caPath),
-                                    fs.readFileSync(key),
-                                    fs.readFileSync(chain),
-                                );
-                            } else {
-                                credentials = grpc.credentials.createSsl(
-                                    fs.readFileSync(serverNode.caPath),
-                                );
+                        if (serverNode.ssl){
+                            if (!serverNode.selfsigned){
+                                credentials = grpc.credentials.createSsl();
+                            } else if (serverNode.caPath){
+                                if (serverNode.mutualTls){
+                                    var chain =  utils.tempFile('cchain.txt', node.chain)
+                                    var key =  utils.tempFile('ckey.txt', node.key)
+                        
+                                    credentials = grpc.credentials.createSsl(
+                                        fs.readFileSync(serverNode.caPath),
+                                        fs.readFileSync(key),
+                                        fs.readFileSync(chain),
+                                    );
+                                } else {
+                                    credentials = grpc.credentials.createSsl(
+                                        fs.readFileSync(serverNode.caPath),
+                                    );
+                                }
                             }
                         }
                         

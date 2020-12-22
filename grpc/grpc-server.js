@@ -13,11 +13,13 @@ module.exports = function (RED) {
         node.port = config.port || 5001;
         node.name = config.name;
         node.protoFile = config.protoFile;
+        node.localServer = config.localServer;
+        node.ssl = config.ssl;
+        node.selfsigned = config.selfsigned;
+        node.mutualTls = config.mutualTls;
         node.ca = config.ca;
         node.chain = config.chain;
         node.key = config.key;
-        node.localServer = config.localServer;
-        node.mutualTls = config.mutualTls;
 
         // read the package name from the protoFile
         var packageName = config.protoFile.match(new RegExp(/package\s+([^;="]*);/));

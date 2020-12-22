@@ -25,24 +25,36 @@
     </div>
 
     <div class="form-row">
-      <button id="keygen">Generate bellow</button>
+        <input type="checkbox" id="node-config-input-ssl" style="display: inline-block; width: auto; vertical-align: top;">
+        <label for="node-config-input-ssl" style="width: auto">SSL?</label>
     </div>
-    <div class="form-row">
-      <input type="checkbox" id="node-config-input-mutualTls" style="display: inline-block; width: auto; vertical-align: top;">
-      <label for="node-config-input-mutualTls" style="width: auto">Mutual TLS?</label>
+    <div id="ssl">
+        <div class="form-row">
+            <input type="checkbox" id="node-config-input-selfsigned" style="display: inline-block; width: auto; vertical-align: top;">
+            <label for="node-config-input-selfsigned" style="width: auto">Self-signed?</label>
+        </div>
+        <div id="selfsigned">
+            <div class="form-row">
+                <input type="checkbox" id="node-config-input-mutualTls" style="display: inline-block; width: auto; vertical-align: top;">
+                <label for="node-config-input-mutualTls" style="width: auto">Mutual TLS?</label>
+            </div>
+            <div class="form-row">
+                <button id="keygen">Generate bellow (takes some time)</button>
+            </div>
+            <div class="form-row">
+                <label for="node-config-input-ca">CA Cert</label>
+                <textarea id="node-config-input-ca" placeholder="CA Cert" rows="10" style="width: 100%"></textarea>
+            </div>
+            <div class="form-row">
+                <label for="node-config-input-chain">Chain Cert</label>
+                <textarea id="node-config-input-chain" placeholder="Chain Cert" rows="10" style="width: 100%"></textarea>
+            </div>
+            <div class="form-row">
+                <label for="node-config-input-key">Private Key</label>
+                <textarea id="node-config-input-key" placeholder="Private Key" rows="10" style="width: 100%"></textarea>
+            </div> 
+        </div>
     </div>
-    <div class="form-row">
-          <label for="node-config-input-ca">CA Cert</label>
-          <textarea id="node-config-input-ca" placeholder="CA Cert" rows="10" style="width: 100%"></textarea>
-      </div>
-    <div class="form-row">
-          <label for="node-config-input-chain">Chain Cert</label>
-          <textarea id="node-config-input-chain" placeholder="Chain Cert" rows="10" style="width: 100%"></textarea>
-      </div>
-    <div class="form-row">
-        <label for="node-config-input-key">Private Key</label>
-        <textarea id="node-config-input-key" placeholder="Private Key" rows="10" style="width: 100%"></textarea>
-    </div> 
 </script>
 
 <script type="text/javascript">
@@ -57,15 +69,38 @@
             name: { value: '' },
             server: { value: '' },
             protoFile: { value: '' },
-            ca: { value: '' },
             caPrivateKey: { value: '' },
             cacert: { value: '' },
             caName: { value: '' },
             caOrgName: { value: '' },
-            chain: { value: '' },
-            key: { value: '' },
+            ca: { value: '', validate: function(v){
+              const ssl = $("#node-config-input-ssl").prop("checked");
+              const selfsigned = $("#node-config-input-selfsigned").prop("checked");
+              if (ssl && selfsigned){
+                return v.length > 0;
+              }
+              return true;
+            } },
+            chain: { value: '', validate: function(v){
+              const ssl = $("#node-config-input-ssl").prop("checked");
+              const selfsigned = $("#node-config-input-selfsigned").prop("checked");
+              if (ssl && selfsigned){
+                return v.length > 0;
+              }
+              return true;
+            }  },
+            key: { value: '', validate: function(v){
+              const ssl = $("#node-config-input-ssl").prop("checked");
+              const selfsigned = $("#node-config-input-selfsigned").prop("checked");
+              if (ssl && selfsigned){
+                return v.length > 0;
+              }
+              return true;
+            }  },
             mutualTls: { value: false },
-            localServer: { value : true },
+            ssl: { value: false },
+            selfsigned: { value: false },
+            localServer: { value : false },
         },
         icon: "grpc.svg",
         color: "#2DA6B0",
@@ -74,6 +109,30 @@
         },
         oneditprepare: function (){
           var that = this;
+
+          if (!this.selfsigned){
+            $('#selfsigned').hide();
+          }
+
+          if (!this.ssl){
+            $('#ssl').hide();
+          }
+
+          $('#node-config-input-ssl').change(function() {
+            if (this.checked){
+              $('#ssl').show();
+            } else {
+              $('#ssl').hide();
+            }
+          });
+
+          $('#node-config-input-selfsigned').change(function() {
+            if (this.checked){
+              $('#selfsigned').show();
+            } else {
+              $('#selfsigned').hide();
+            }
+          });
 
           $("#keygen").click(() => {
             console.log(this);
