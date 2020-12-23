@@ -59,18 +59,22 @@ module.exports = function (RED) {
             );
 
             let credentials;
-            if (node.ca){
-                var ca =  utils.tempFile('ca.txt', node.ca)
-                var chain =  utils.tempFile('chain.txt', node.chain)
-                var key =  utils.tempFile('key.txt', node.key)
-
-                node.caPath = ca;
+            if (node.ssl){
+                if (!node.selfsigned){
+                    credentials = grpc.credentials.createSsl();
+                } else if (node.ca && node.chain && node.key){
+                    var ca =  utils.tempFile('ca.txt', node.ca)
+                    var chain =  utils.tempFile('chain.txt', node.chain)
+                    var key =  utils.tempFile('key.txt', node.key)
     
-                credentials = grpc.ServerCredentials.createSsl(
-                    fs.readFileSync(ca), [{
-                    cert_chain: fs.readFileSync(chain),
-                    private_key: fs.readFileSync(key)
-                }], node.mutualTls);
+                    node.caPath = ca;
+        
+                    credentials = grpc.ServerCredentials.createSsl(
+                        fs.readFileSync(ca), [{
+                        cert_chain: fs.readFileSync(chain),
+                        private_key: fs.readFileSync(key)
+                    }], node.mutualTls);
+                }
             }
            
             // If we start a local server

@@ -58,8 +58,20 @@
             server: {type:"grpc-server",required:true},
             service: {value:"",required:true},
             method: {value:"",required:true},
-            chain: { value: '' },
-            key: { value: '' },
+            chain: { value: '', validate: function(v){
+              const mutualTls = $("#mutualTls").is(':visible');
+              if (mutualTls){
+                return v.length > 0;
+              }
+              return true;
+            }},
+            key: { value: '', validate: function(v){
+              const mutualTls = $("#mutualTls").is(':visible');
+              if (mutualTls){
+                return v.length > 0;
+              }
+              return true;
+            }},
         },
         inputs:1,
         outputs:1,
