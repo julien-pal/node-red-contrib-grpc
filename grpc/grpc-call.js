@@ -61,13 +61,24 @@ module.exports = function (RED) {
                         );
                     }
 
+                    let metadata = new grpc.Metadata();
+                    if (typeof msg.metadata === 'object'){
+                        Object.keys(msg.metadata).forEach(key => {
+                            try {
+                                metadata.add(key, JSON.stringify(msg.metadata[key]));
+                            } catch (e){
+                                node.error(e);
+                            }
+                        });
+                    }
+
                     if (node.client) {
                         if (!node.client[config.method]) {
                             node.status({fill:"red",shape:"dot",text: "Method " + config.method + " not in proto file"});
                         } else {
                             node.status({});
                             if (proto[config.service].service[config.method].responseStream) {
-                                node.channel = node.client[config.method](msg.payload);
+                                node.channel = node.client[config.method](msg.payload, metadata);
                                 node.channel.on("data", function (data) {
                                     msg.payload = data;
                                     node.send(msg);
@@ -79,7 +90,7 @@ module.exports = function (RED) {
                                 });
 
                             } else {
-                                node.client[config.method](msg.payload, function(error, data) {
+                                node.client[config.method](msg.payload, metadata, function(error, data) {
                                     msg.payload = data;
                                     msg.error = error;
                                     node.send(msg);
