@@ -33,7 +33,7 @@ module.exports = function (RED) {
                         node.chain = config.chain;
                         node.key = config.key;
 
-                        let credentials;
+                        let credentials = grpc.credentials.createInsecure();
                         if (serverNode.ssl){
                             if (!serverNode.selfsigned){
                                 credentials = grpc.credentials.createSsl();
@@ -54,10 +54,24 @@ module.exports = function (RED) {
                                 }
                             }
                         }
+
+                        let metadataCred = grpc.credentials.createFromMetadataGenerator((options, cb) => {
+                            let metadata = new grpc.Metadata();
+                            if (typeof msg.metadata === 'object'){
+                                Object.keys(msg.metadata).forEach(key => {
+                                    try {
+                                        metadata.add(key, JSON.stringify(msg.metadata[key]));
+                                    } catch (e){
+                                        node.error(e);
+                                    }
+                                });
+                            }
+                            cb(null, metadata);
+                        })
                         
                         node.client = new proto[config.service](
                             REMOTE_SERVER,
-                            credentials || grpc.credentials.createInsecure()
+                            grpc.credentials.combineChannelCredentials(credentials, metadataCred)
                         );
                     }
 
