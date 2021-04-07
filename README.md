@@ -11,7 +11,7 @@ Provides server and client side implementation of gRPC.
 
 ## Sample flow
 
-https://github.com/julien-pal/node-red-contrib-grpc/blob/master/README.md
+https://flows.nodered.org/flow/9b5dee7e39a71bc3b19ac669be0479e5
 
 
 ## Install
