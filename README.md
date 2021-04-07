@@ -9,6 +9,10 @@ Based on [gRPC][2]
 
 Provides server and client side implementation of gRPC.
 
+## Sample flow
+
+https://github.com/julien-pal/node-red-contrib-grpc/blob/master/README.md
+
 
 ## Install
 
