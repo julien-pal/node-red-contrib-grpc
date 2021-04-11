@@ -69,16 +69,22 @@ module.exports = function (RED) {
                             if (proto[config.service].service[config.method].responseStream) {
                                 node.channel = node.client[config.method](msg.payload);
                                 node.channel.on("data", function (data) {
-                                    node.send({ payload: data });
+                                    let message = RED.util.cloneMessage(msg);
+                                    message.payload = data;
+                                    node.send(message);
                                 });
 
                                 node.channel.on("error",function (error) {
-                                    node.send({ error });
+                                    let message = RED.util.cloneMessage(msg);
+                                    message.error = error;
+                                    node.send(message);
                                 });
 
                             } else {
                                 node.client[config.method](msg.payload, function(error, data) {
-                                    node.send({ payload: data, error });
+                                    msg.error = error;
+                                    msg.payload = data;
+                                    node.send(msg);
                                 })
                             }
                         }
