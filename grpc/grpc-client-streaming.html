@@ -16,6 +16,19 @@
         <label for="node-input-method" style="width: 110px;"><i class="fa fa-tag"></i> Method</label>
         <input type="text" id="node-input-method" placeholder="Method name">
     </div>
+    <div id="mutualTls">
+        <div class="form-row">
+            <button id="keygen"">Generate bellow</button>
+          </div>
+        <div class="form-row">
+            <label for="node-input-chain">Chain Cert</label>
+            <textarea id="node-input-chain" placeholder="Chain Cert" rows="10" style="width: 100%"></textarea>
+        </div>
+        <div class="form-row">
+            <label for="node-input-key">Private Key</label>
+            <textarea id="node-input-key" placeholder="Private Key" rows="10" style="width: 100%"></textarea>
+        </div> 
+    </div>
 </script>
 
 <script type="text/x-red" data-help-name="grpc-client-streaming">
@@ -50,7 +63,21 @@
             name: {value:""},
             server: {type:"grpc-server",required:true},
             service: {value:"",required:true},
-            method: {value:"",required:true}  
+            method: {value:"",required:true},
+            chain: { value: '', validate: function(v){
+              const mutualTls = $("#mutualTls").is(':visible');
+              if (mutualTls){
+                return v.length > 0;
+              }
+              return true;
+            }},
+            key: { value: '', validate: function(v){
+              const mutualTls = $("#mutualTls").is(':visible');
+              if (mutualTls){
+                return v.length > 0;
+              }
+              return true;
+            }},
         },
         inputs:1,
         outputs:1,
@@ -60,6 +87,39 @@
         },
         labelStyle: function() {
             return (this.name)?"node_label_italic":"";
+        },
+        oneditprepare: function(){
+            $("#node-input-server").change(function(){
+                var config = RED.nodes.node($(this).val());
+    
+                if (config && config.mutualTls){
+                    $("#mutualTls").show();    
+                } else {
+                    $("#mutualTls").hide();
+                }
+            })
+            
+            $("#keygen").click(e => {
+                var config = RED.nodes.node($("#node-input-server").val());
+
+                if (!config){
+                    alert("Please choose a server first!");
+                    return;
+                }
+                
+                const { caPrivateKey, cacert, mutualTls } = config;
+                const server = document.getElementById('node-input-server').value;
+                const name = document.getElementById('node-input-name').value;
+
+                if (!name || !server || !caPrivateKey || !cacert){
+                    alert("Please choose a properly configured server and fill all the fields!");
+                    return;
+                }
+
+                const { cert, privateKey } = certGen(cacert, caPrivateKey , server, name);
+                document.getElementById('node-input-chain').value = cert;
+                document.getElementById('node-input-key').value = privateKey;
+            })
         }
     });
 </script>
