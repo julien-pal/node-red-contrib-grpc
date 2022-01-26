@@ -54,7 +54,11 @@ module.exports = function (RED) {
                                 }
                             }
                         }
-                        
+
+                        if (node.client) {
+                            grpc.closeClient(node.client)
+                        }
+
                         node.client = new proto[config.service](
                             REMOTE_SERVER,
                             credentials || grpc.credentials.createInsecure()
